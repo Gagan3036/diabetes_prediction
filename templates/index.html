@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <link rel="icon" href="https://img.icons8.com/dusk/64/000000/diabetes-care.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom right, #E0FFFF, #ADD8E6);
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #008B8B;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin: 10px 0 5px;
+            color: #4B0082;
+            font-weight: bold;
+        }
+        input {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #F0F8FF;
+        }
+        button {
+            padding: 10px;
+            background-color: #FF69B4;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background-color: #FF1493;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #F5F5F5;
+            color: #008B8B;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Diabetes Prediction</h1>
+        <form id="prediction-form">
+            <label for="pregnancies">Pregnancies:</label>
+            <input type="number" step="any" id="pregnancies" name="pregnancies" required>
+            <label for="glucose">Glucose:</label>
+            <input type="number" step="any" id="glucose" name="glucose" required>
+            <label for="diastolic">Diastolic:</label>
+            <input type="number" step="any" id="diastolic" name="diastolic" required>
+            <label for="triceps">Triceps:</label>
+            <input type="number" step="any" id="triceps" name="triceps" required>
+            <label for="insulin">Insulin:</label>
+            <input type="number" step="any" id="insulin" name="insulin" required>
+            <label for="bmi">BMI:</label>
+            <input type="number" step="any" id="bmi" name="bmi" required>
+            <label for="dpf">DPF:</label>
+            <input type="number" step="any" id="dpf" name="dpf" required>
+            <label for="age">Age:</label>
+            <input type="number" step="any" id="age" name="age" required>
+            <button type="submit">Predict</button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            const resultDiv = document.getElementById('result');
+            if (result.error) {
+                resultDiv.textContent = 'Error: ' + result.error;
+                resultDiv.style.color = 'red';
+            } else {
+                resultDiv.textContent = 'Prediction: ' + (result.prediction ? 'Diabetic' : 'Non-Diabetic');
+                resultDiv.style.color = result.prediction ? 'red' : 'green';
+            }
+        });
+    </script>
+</body>
+</html>
